@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SRVP Books — Home</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">SR</div>
+        <div>
+          <div>SRVP Books</div>
+          <small style="opacity:0.85;font-weight:600;">Your Gateway to Affordable Learning</small>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="cart.html">Cart 🧾</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="left">
+        <h1>Affordable new & pre-loved books for students</h1>
+        <p>SRVP Books is a student-focused bookshop that brings quality titles and great prices together. Browse curated collections, find course texts, and support local authors.</p>
+
+        <div class="search-row">
+          <input id="search" class="input-search" placeholder="Search by title, author or subject..." />
+          <button id="searchBtn" class="btn-cta">Search</button>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <a href="shop.html" class="btn btn-view">Browse Shop</a>
+          <a href="about.html" class="btn btn-view">About Us</a>
+        </div>
+      </div>
+      <div class="right">
+        <img src="https://picsum.photos/520/320?book" alt="books" style="width:100%; border-radius:10px; box-shadow: 0 10px 30px rgba(2,6,23,0.12);" />
+      </div>
+    </section>
+
+    <section style="margin-top:18px;">
+      <h2 style="margin-bottom:10px;">New Arrivals & Spotlight</h2>
+      <div class="carousel" id="carousel">
+        <!-- Small cards; JS will fill these -->
+      </div>
+    </section>
+
+    <section style="margin-top:22px;">
+      <h2 style="margin-bottom:10px;">Staff picks</h2>
+      <div class="grid" id="spotGrid">
+        <!-- staff picks inserted by JS -->
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>Built from project plan — SRVP Books prototype. &nbsp; <small style="opacity:0.8">Designed for demo & coursework</small></div>
+    </footer>
+  </main>
+
+<script>
+/* lightweight data and rendering for demo */
+const books = [
+  { id: 'b1', title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 8.50, img:'https://picsum.photos/seed/tkam/300/420' },
+  { id: 'b2', title: '1984', author: 'George Orwell', price: 7.75, img:'https://picsum.photos/seed/1984/300/420' },
+  { id: 'b3', title: 'Pride and Prejudice', author: 'Jane Austen', price: 9.25, img:'https://picsum.photos/seed/pride/300/420' },
+  { id: 'b4', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 6.80, img:'https://picsum.photos/seed/gatsby/300/420' },
+  { id: 'b5', title: 'The Catcher in the Rye', author: 'J.D. Salinger', price: 7.00, img:'https://picsum.photos/seed/catcher/300/420' },
+  { id: 'b6', title: 'Sapiens', author: 'Yuval Noah Harari', price: 12.50, img:'https://picsum.photos/seed/sapiens/300/420' },
+];
+
+function buildCarousel(){
+  const el = document.getElementById('carousel');
+  books.slice(0,4).forEach(b=>{
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML = `<img src="${b.img}" alt="${b.title}"><h3>${b.title}</h3><p>${b.author}</p><div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;"><strong>$${b.price.toFixed(2)}</strong><button class="btn btn-add" onclick="addToCart('${b.id}')">Add</button></div>`;
+    el.appendChild(card);
+  });
+}
+function buildSpotGrid(){
+  const g = document.getElementById('spotGrid');
+  books.slice(0,6).forEach(b=>{
+    const d = document.createElement('div'); d.className='book';
+    d.innerHTML = `<img src="${b.img}" alt=""><div class="meta"><h4>${b.title}</h4><div class="author">${b.author}</div><div class="price">$${b.price.toFixed(2)}</div><div class="actions"><button class="btn btn-add" onclick="addToCart('${b.id}')">Add to cart</button><a href="shop.html" class="btn btn-view">View</a></div></div>`;
+    g.appendChild(d);
+  });
+}
+
+/* Simple cart storage (localStorage) */
+function getCart(){ return JSON.parse(localStorage.getItem('srvp_cart'||'{}')) || {}; }
+function saveCart(c){ localStorage.setItem('srvp_cart', JSON.stringify(c)); }
+function addToCart(id){
+  const c = getCart();
+  if(!c[id]) c[id]=0;
+  c[id] += 1;
+  saveCart(c);
+  alert('Added to cart');
+}
+document.getElementById('searchBtn').addEventListener('click', ()=> {
+  const q = document.getElementById('search').value.trim();
+  if(!q) location.href='shop.html';
+  else location.href = 'shop.html?q=' + encodeURIComponent(q);
+})
+
+buildCarousel();
+buildSpotGrid();
+</script>
+</body>
+</html>

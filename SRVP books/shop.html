@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SRVP Books — Shop</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">SR</div>
+        <div>
+          <div>SRVP Books</div>
+          <small style="opacity:0.85;font-weight:600;">Shop</small>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="cart.html">Cart 🧾</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 style="margin-bottom:12px;">Shop — Browse titles</h2>
+
+    <div class="controls">
+      <input id="q" class="filter-input" placeholder="Search by title or author" />
+      <select id="sort" class="select">
+        <option value="popular">Sort: Popular</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+      </select>
+      <select id="category" class="select">
+        <option value="all">All categories</option>
+        <option value="fiction">Fiction</option>
+        <option value="nonfiction">Non-fiction</option>
+        <option value="textbook">Textbook</option>
+      </select>
+      <a href="cart.html" class="btn btn-view">View Cart</a>
+    </div>
+
+    <div class="grid" id="booksGrid"></div>
+
+    <footer class="footer">
+      <div>Prototype shop — no backend (demo only)</div>
+    </footer>
+  </main>
+
+<script>
+/* Static catalog */
+const catalog = [
+  { id:'b1', title:'To Kill a Mockingbird', author:'Harper Lee', price:8.50, category:'fiction', img:'https://picsum.photos/seed/tkam/300/420', desc:'A classic novel about justice and childhood in the American South.' },
+  { id:'b2', title:'1984', author:'George Orwell', price:7.75, category:'fiction', img:'https://picsum.photos/seed/1984/300/420', desc:'Dystopian novel about surveillance and totalitarianism.' },
+  { id:'b3', title:'Pride and Prejudice', author:'Jane Austen', price:9.25, category:'fiction', img:'https://picsum.photos/seed/pride/300/420', desc:'A witty exploration of manners and marriage.' },
+  { id:'b4', title:'The Great Gatsby', author:'F. Scott Fitzgerald', price:6.80, category:'fiction', img:'https://picsum.photos/seed/gatsby/300/420', desc:'Roaring Twenties classic—ambition, love and loss.' },
+  { id:'b5', title:'Sapiens', author:'Yuval Noah Harari', price:12.50, category:'nonfiction', img:'https://picsum.photos/seed/sapiens/300/420', desc:'A brief history of humankind.' },
+  { id:'b6', title:'Introduction to Algorithms (3rd ed.)', author:'Cormen et al.', price:45.00, category:'textbook', img:'https://picsum.photos/seed/algo/300/420', desc:'Comprehensive algorithms textbook (used copy).' },
+  { id:'b7', title:'The Catcher in the Rye', author:'J.D. Salinger', price:7.00, category:'fiction', img:'https://picsum.photos/seed/catcher/300/420', desc:'A teenage protagonist navigating identity.' },
+  { id:'b8', title:'Clean Code', author:'Robert C. Martin', price:28.00, category:'textbook', img:'https://picsum.photos/seed/cleancode/300/420', desc:'Software craftsmanship and best practices.' },
+];
+
+/* Rendering */
+function renderGrid(list){
+  const g = document.getElementById('booksGrid'); g.innerHTML='';
+  list.forEach(b=>{
+    const d = document.createElement('div'); d.className='book';
+    d.innerHTML = `<img src="${b.img}" alt="${b.title}"><div class="meta"><h4>${b.title}</h4><div class="author">${b.author}</div><div style="font-size:0.9rem;color:#6b7280;margin-top:6px;">${b.desc}</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;"><div class="price">$${b.price.toFixed(2)}</div><div class="actions"><button class="btn btn-add" onclick="addToCart('${b.id}')">Add</button><button class="btn btn-view" onclick="viewDetails('${b.id}')">Details</button></div></div></div>`;
+    g.appendChild(d);
+  });
+}
+
+function getQueryParam(name){
+  const params = new URLSearchParams(location.search);
+  return params.get(name);
+}
+
+function applyFilters(){
+  let list = [...catalog];
+  const q = (document.getElementById('q').value || '').toLowerCase();
+  const cat = document.getElementById('category').value;
+  if(q){
+    list = list.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+  }
+  if(cat && cat !== 'all'){
+    list = list.filter(b=>b.category===cat);
+  }
+  const sort = document.getElementById('sort').value;
+  if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+  if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+  renderGrid(list);
+}
+
+/* Small utilities */
+function addToCart(id){
+  const c = JSON.parse(localStorage.getItem('srvp_cart')||'{}');
+  c[id] = (c[id]||0) + 1;
+  localStorage.setItem('srvp_cart', JSON.stringify(c));
+  alert('Added to cart');
+}
+function viewDetails(id){
+  alert('This is a demo. Details would appear here for ' + id);
+}
+
+/* Initialize */
+document.getElementById('q').value = getQueryParam('q') || '';
+applyFilters();
+document.getElementById('q').addEventListener('input', applyFilters);
+document.getElementById('category').addEventListener('change', applyFilters);
+document.getElementById('sort').addEventListener('change', applyFilters);
+</script>
+</body>
+</html>
